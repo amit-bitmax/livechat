@@ -19,7 +19,7 @@ import { format } from 'date-fns';
 import StyledBadge from '../../stylejs/StyleBadge';
 const IMG_BASE_URL = 'http://localhost:5003/uploads/profile';
 
-const ProfileCard = ({ agent, onToggle }) => {
+const UserProfileCard = ({ agent, onToggle }) => {
   const navigate = useNavigate();
   const [elapsed, setElapsed] = useState(agent?.elapsedTime || 0);
   const [operProfile, setOpenProfile] = useState(false);
@@ -140,4 +140,4 @@ const ProfileCard = ({ agent, onToggle }) => {
   );
 };
 
-export default ProfileCard;
+export default UserProfileCard;

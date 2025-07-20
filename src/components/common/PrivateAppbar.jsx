@@ -9,7 +9,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import { styled } from '@mui/material/styles';
 import Sidebar from './Sidebar';
-import ProfileCard from './profileCard';
+
 import Notifications from './Notifications';
 import { employee } from './menuData';
 import { ColorModeContext } from '../../App';
@@ -17,6 +17,7 @@ import { Brightness4, Brightness7 } from '@mui/icons-material';
 import { useGetProfileQuery } from '../../features/auth/authApi';
 import { format } from 'date-fns-tz';
 import StyledBadge from '../../stylejs/StyleBadge';
+import ProfileCard from './UserProfileCard';
 const IMG_BASE_URL ='http://localhost:5003/uploads/profile';
 
 const drawerWidth = 200;
