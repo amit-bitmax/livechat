@@ -1,5 +1,5 @@
 import React, { createContext, useMemo, useState } from "react";
-import { ThemeProvider } from "@mui/material";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ToastContainer } from "react-toastify";
 import MainRouter from "./router/MainRouter";
 import AppTheme from "./theme/AppTheme";
@@ -25,6 +25,7 @@ const App = () => {
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
+        <CssBaseline/>
         <ToastContainer position="top-right" autoClose={3000} />
         <MainRouter />
       </ThemeProvider>

@@ -10,6 +10,7 @@ import Chat from "../main/chats/Chat";
 import Login from "../pages/Login";
 import Inbox from "../main/email/Ticket";
 import ChatDemo from "../main/chats/ChatDemo";
+import TicketDetail from "../main/email/TicketDetail";
 
 const routers = createBrowserRouter([
     {
@@ -47,6 +48,10 @@ const routers = createBrowserRouter([
             {
                 path: "inbox",
                 element: <Inbox />,
+            },
+            {
+                path: "/inbox/:ticketId",
+                element: <TicketDetail />,
             },
             {
                 path: "analytics/customers",

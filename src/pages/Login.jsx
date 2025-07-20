@@ -104,7 +104,7 @@ const Login = () => {
         }}
       >
         <Grid container justifyContent="center">
-          <Grid size={{xs:12,lg:6}}>
+          <Grid size={{xs:12,lg:12}}>
             <Card elevation={2} sx={{
               borderRadius: 2,
               backdropFilter: 'blur(10px)',

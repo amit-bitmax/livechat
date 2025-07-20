@@ -36,14 +36,23 @@ export const ticketApi = createApi({
     // Reply to ticket
     replyToTicket: builder.mutation({
       query: ({ ticketId, message }) => ({
-        url: `/tickets/reply/${ticketId}`,
+        url: `tickets/${ticketId}/reply`,
         method: 'POST',
-        data: { message },
+        body: { message },
       }),
-      invalidatesTags: ['Ticket'],
+      invalidatesTags: (result, error, { ticketId }) => [
+        { type: 'Ticket', id: ticketId }
+      ],
     }),
 
-    // Get replies
+    // Get single Ticket
+    getTicketId: builder.query({
+      query: (ticketId) => ({
+        url: `/tickets/${ticketId}`,
+        method: 'GET',
+      }),
+    }),
+     // Get replies
     getTicketReplies: builder.query({
       query: (ticketId) => ({
         url: `/tickets/replies/${ticketId}`,
@@ -65,6 +74,7 @@ export const ticketApi = createApi({
 export const {
   useCreateTicketMutation,
   useGetAgentTicketsQuery,
+  useGetTicketIdQuery,
   useReplyToTicketMutation,
   useGetTicketRepliesQuery,
   useGetFilteredTicketsQuery,

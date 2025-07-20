@@ -160,8 +160,8 @@ const Sidebar = ({ open, handleDrawerClose }) => {
     };
 
     return (
-        <Drawer variant="permanent" open={open}>
-            <DrawerHeader open={open}>
+        <Drawer variant="permanent" open={open} >
+            <DrawerHeader open={open} sx={{background:'#ebececf4'}}>
                 <Typography textAlign={'center'} sx={{ p: 1.5 }} variant="h6" noWrap component="div">
                     Live Chats
                 </Typography>
@@ -170,7 +170,7 @@ const Sidebar = ({ open, handleDrawerClose }) => {
                 </IconButton>
             </DrawerHeader>
             <Divider />
-            <Box>
+            <Box sx={{background:'#ebececf4',height:'100%'}}>
                 <List>
                     {menuData.map((section) => (
                         <React.Fragment key={section.label}>

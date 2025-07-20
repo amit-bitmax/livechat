@@ -46,6 +46,7 @@ const PrivateAppbar = ({ children }) => {
   const colorMode = useContext(ColorModeContext);
   const { data,location, isLoading, isError } = useGetProfileQuery();
 
+ 
   useEffect(() => {
     setOpen(isLaptop);
   }, [isLaptop]);
@@ -100,7 +101,7 @@ const PrivateAppbar = ({ children }) => {
 
   const renderProfileMenu = useMemo(() => (
     <Menu
-      sx={{ mt: 1 }}
+      sx={{ mt: 1.5 }}
       elevation={0}
       anchorEl={profileAnchorEl}
       open={Boolean(profileAnchorEl)}
@@ -133,7 +134,7 @@ const PrivateAppbar = ({ children }) => {
         elevation={0}
         position="fixed"
         open={open}
-        sx={{ backgroundImage: "linear-gradient(to left,#fafafa)" }}
+        sx={{background:'#ebececf4'}}
       >
         <Toolbar>
           <IconButton size="small" onClick={handleDrawerToggle} edge="start" sx={{ mr: 2, ...(open && { display: 'none' }) }}>
@@ -177,10 +178,10 @@ const PrivateAppbar = ({ children }) => {
         component="main"
         sx={{
           flexGrow: 1,
-          p: 2,
+          p: 1,
           pt: 8,
           overflow: 'hidden',
-          backgroundImage: "linear-gradient(to right,#F7F9FB)",
+          // backgroundImage: "linear-gradient(to right,#F7F9FB)",
           width: open ? `calc(98.8vw - ${drawerWidth}px)` : "93vw",
           height: `calc(100vw - ${appHeight}px)`
         }}
