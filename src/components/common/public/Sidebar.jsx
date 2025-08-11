@@ -8,7 +8,7 @@ import { ChevronLeft, ChevronRight,  ExpandMore } from '@mui/icons-material';
 import { menuData } from './menuData';
 import { PiDotOutlineFill, PiDotOutlineLight } from 'react-icons/pi';
 
-const drawerWidth = 200;
+const drawerWidth = 190;
 
 const openedMixin = (theme) => ({
     width: drawerWidth,
@@ -79,8 +79,8 @@ const Sidebar = ({ open, handleDrawerClose }) => {
     };
 
     const getLevelIcon = (item, level) => {
-        if (item.icon) return <item.icon sx={{ fontSize: level === 0 ? 24 : level === 1 ? 20 : 15 }} />;
-        if (level === 1) return <PiDotOutlineFill sx={{ fontSize: 20 }} />;
+        if (item.icon) return <item.icon sx={{ fontSize: level === 0 ? 44 : level === 1 ? 40 : 45 }} />;
+        if (level === 1) return <PiDotOutlineFill sx={{ fontSize: 30 }} />;
         if (level >= 2) return <PiDotOutlineLight sx={{ fontSize: 15 }} />;
         return null;
     };
@@ -97,7 +97,7 @@ const Sidebar = ({ open, handleDrawerClose }) => {
                         {/* Left border indicator */}
                         <Box
                             sx={{
-                                background: isOpen ?  ' #455a64':'none' ,
+                                background: isActive ?  ' #455a64':'none' ,
                                 borderRadius: '50px',
                                 height: '20px',
                                 width: '5px',
@@ -107,8 +107,8 @@ const Sidebar = ({ open, handleDrawerClose }) => {
                         <Box
                             sx={{
                                 my: 0.2,
-                                // background: isActive ? 'rgba(96, 95, 77, 0.68)' : 'none',
-                                borderRadius: '5px',
+                                background: isActive ? 'rgba(255, 255, 255, 0.68)' : 'none',
+                                borderRadius: '5px 50px 50px 5px',
                                 width: '100%',
                             }}
                         >

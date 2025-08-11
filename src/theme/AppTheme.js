@@ -29,16 +29,16 @@ const AppTheme = (mode = 'light') => createTheme({
         mode,
         background: {
             default: mode === 'dark' ? '#121212' : '#fff',
-            paper: mode === 'dark' ? '#1e1e1e' : '#e5e0e0ff',
+            paper: mode === 'dark' ? '#1e1e1e' : '#271e1eff',
         },
         ...(mode === 'dark' && {
             text: {
                 primary: '#260b0bff',
-                secondary: '#cccccc'
+                secondary: '#ffffffff'
             }
         }),
         primary: {
-            main: colors.teal[900],
+            main: colors.teal[50],
             dark: colors.teal[500],
             deem: colors.teal[200],
             light: colors.teal[50],
@@ -50,10 +50,10 @@ const AppTheme = (mode = 'light') => createTheme({
             light: colors.deepPurple[50]
         },
         info: {
-            main: colors.blueGrey[900],
-            dark: colors.blueGrey[700],
-            deem: colors.blueGrey[500],
-            light: colors.blueGrey[50]
+            main: colors.grey[900],
+            dark: colors.grey[700],
+            deem: colors.grey[500],
+            light: colors.grey[50]
         },
         success: {
             main: colors.green[700],
@@ -124,7 +124,7 @@ const AppTheme = (mode = 'light') => createTheme({
         body2: {
             fontFamily: "Roboto",
             fontWeight: 400,
-            fontSize: "0.725rem",
+            fontSize: "0.675rem",
             lineHeight: 1.43,
             letterSpacing: "0.01071em"
         },
@@ -185,13 +185,25 @@ const AppTheme = (mode = 'light') => createTheme({
             },
         },
         MuiPaper: {
-            styleOverrides: {
-                root: {
-                    border: '1px solid #ccc',
-                    background: ' rgb(254, 254, 254)',
-                    backdropFilter: 'blur(5px)'
-                },
+        styleOverrides: {
+            root: {
+            background: 'rgba(255, 255, 255, 0.2)', 
+            // boxShadow:'0 4px 30px rgba(0, 0, 0, 0.1)',
+            backdropFilter: 'blur(5px)',
+            WebkitBackdropFilter: 'blur(5px)', 
+            border: '1px solid rgba(255, 255, 255, 0.1))', 
             },
+        },
+        },
+        MuiCard: {
+        styleOverrides: {
+            root: {
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(5px)',
+            WebkitBackdropFilter: 'blur(5px)',
+            border: '1px solid rgba(191, 162, 162, 0.3)',
+            },
+        },
         },
         MuiTableCell: {
             styleOverrides: {
@@ -238,10 +250,10 @@ const AppTheme = (mode = 'light') => createTheme({
         MuiTabs: {
         styleOverrides: {
             root: {
-            minHeight: 28,
-            height: 30,
+            minHeight: 25,
+            height: 35,
             padding: 0,
-            fontSize: '10px',
+            fontSize: '15px',
             },
             indicator: {
             height: 2, 
@@ -251,8 +263,9 @@ const AppTheme = (mode = 'light') => createTheme({
         MuiTab: {
         styleOverrides: {
             root: {
+            width:'50px',
             minHeight: 25,
-            height: 25,
+            height: 35,
             padding: '0 8px',
             fontSize: '10px',
             fontWeight: 'bold',
@@ -296,6 +309,25 @@ const AppTheme = (mode = 'light') => createTheme({
                 },
                 input: {
                     padding: '8px 12px',
+                },
+            },
+        },
+        MuiTextField: {
+            styleOverrides: {
+                root: {
+                    '& .MuiOutlinedInput-notchedOutline': {
+                        border: 0,
+                        background: 'none',
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                        border: 0,
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        border: 0,
+                    },
+                },
+                input: {
+                    padding: '0px 12px',
                 },
             },
         },

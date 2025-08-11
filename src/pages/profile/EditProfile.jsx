@@ -12,7 +12,7 @@ const EditProfile = () => {
 
   const [formData, setFormData] = useState({
     user_name: user?.user_name || '',
-    contact: user?.contact || '',
+    mobile: user?.mobile || '',
     first_name: user?.name?.first_name || '',
     last_name: user?.name?.last_name || '',
   });
@@ -34,7 +34,7 @@ const EditProfile = () => {
     e.preventDefault();
     const form = new FormData();
     form.append('user_name', formData.user_name);
-    form.append('contact', formData.contact);
+    form.append('mobile', formData.mobile);
     form.append('name.first_name', formData.first_name);
     form.append('name.last_name', formData.last_name);
     if (image) form.append('profileImage', image);
@@ -67,9 +67,9 @@ const EditProfile = () => {
                 fullWidth
               />
               <TextField
-                label="Contact"
-                name="contact"
-                value={formData.contact}
+                label="Mobile"
+                name="mobile"
+                value={formData.mobile}
                 onChange={handleChange}
                 fullWidth
               />

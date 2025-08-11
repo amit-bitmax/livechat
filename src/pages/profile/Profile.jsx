@@ -14,26 +14,59 @@ const Profile = () => {
   const user = data?.data;
   const location = user?.location;
   return (
-    <Box display="flex" justifyContent="center" mt={5}>
-      <Card sx={{ minWidth: 400, padding: 2 }}>
-        <CardContent>
-          <Box display="flex" flexDirection="column" alignItems="center">
-            <StyledBadge
-              overlap="circular"
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-              variant={user?.is_active === true ? "dot" : "none"}
-            >
-              <Avatar alt={user?.first_name} src={`${IMG_BASE_URL}/${user?.profileImage}`} sx={{ height: "80px", width: '80px' }} />
-            </StyledBadge>
-            <Typography variant="h6">UserName: {user?.name?.first_name} {user?.name?.last_name}</Typography>
+
+        <Card sx={{ position: 'relative',height:'100%', overflow: 'visible' }}>
+  {/* Top Background */}
+  <Box
+    sx={{
+      height: '100px',
+      background: '#ffffff8f', // Top background color
+      borderTopLeftRadius: '5px',
+      borderTopRightRadius: '5px',
+    }}
+  />
+
+  {/* Avatar overlapping */}
+  <CardContent
+    sx={{
+      background: 'none',
+      pt: 5, // padding top to adjust space after overlapping avatar
+      textAlign: 'center',
+    }}
+  >
+    <Box
+      sx={{
+        position: 'absolute',
+        top: 50, // adjust this to move avatar up/down
+        left: '50%',
+        transform: 'translateX(-50%)',
+      }}
+    >
+      <StyledBadge
+        overlap="circular"
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        variant={user?.is_active === true ? 'dot' : 'none'}
+      >
+        <Avatar
+          alt={user?.first_name}
+          src={`${IMG_BASE_URL}/${user?.profileImage}`}
+          sx={{ height: '80px', width: '80px', border: '2px solid #fff' }}
+        />
+      </StyledBadge>
+    </Box>
+
+    {/* Other content */}
+    <Typography variant="h6" >
+      {user?.first_name}
+    </Typography>
+     <Typography variant="h6">UserName: {user?.name?.first_name} {user?.name?.last_name}</Typography>
             <Typography variant="body2">Email: {user.email}</Typography>
-            <Typography variant="body2">Contact: {user.contact}</Typography>
+            <Typography variant="body2">Mobile: {user.mobile}</Typography>
             <Typography variant="body2">Role: {user.role}</Typography>
             <Typography variant="body2">
               Name: {user.name?.first_name} {user.name?.last_name}
             </Typography>
-          </Box>
-          <Box>
+         <Box>
             <Typography>IP Address: {location?.ip}</Typography>
             <Typography>City: {location?.city}</Typography>
             <Typography>Region: {location?.region}</Typography>
@@ -41,9 +74,10 @@ const Profile = () => {
             <Typography>ISP: {location?.isp}</Typography>
             <Typography>Timezone: {location?.timezone}</Typography>
           </Box>
-        </CardContent>
-      </Card>
-    </Box>
+  </CardContent>
+</Card>
+
+
   );
 };
 

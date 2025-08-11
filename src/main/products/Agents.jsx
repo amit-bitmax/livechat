@@ -8,7 +8,7 @@ import {
 import { Search } from '@mui/icons-material';
 import AgentModal from './AgentModal';
 import { agentData } from './data';
-import Paginations from '../../components/common/Paginations';
+import Paginations from '../../components/common/public/Paginations';
 
 const Agents = () => {
   const [page, setPage] = useState(1);

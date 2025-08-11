@@ -26,7 +26,7 @@ const UserProfileCard = ({ agent, onToggle }) => {
   const [toggleBreak] = useToggleBreakMutation();
   const cardToggle = () => {
     setOpenProfile((prev) => !prev);
-    navigate('/team/agent/profile');
+    navigate('/agent/profile');
   };
 
   useEffect(() => {
@@ -46,7 +46,6 @@ const UserProfileCard = ({ agent, onToggle }) => {
   };
   const handleLogout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('role');
     toast.success('Logged out successfully');
     navigate('/login');
   };
@@ -54,8 +53,8 @@ const UserProfileCard = ({ agent, onToggle }) => {
   const handleToggle = async () => {
     try {
       await toggleBreak().unwrap(); // ✅ Call API
-      toast.success(`Status changed to ${agent?.data?.breakLogs?.start ? 'Break' : 'Active'}`);
-      onToggle(agent._id); // Optional: update local state
+      toast.success(`Status changed to ${agent?.data?.workStatus ? 'Break' : 'Active'}`);
+      onToggle(agent._id); 
     } catch (error) {
       toast.error('Failed to update status');
     }
@@ -74,6 +73,8 @@ const UserProfileCard = ({ agent, onToggle }) => {
         <Box>
           <Typography variant="body1">{agent?.data?.email}</Typography>
           <Typography variant="body2">E.ID: {agent?.data?.employee_id}</Typography>
+           <Typography variant="body2">Department: {agent?.data?.department}</Typography>
+           <Typography variant='body2'sx={{color: '#827717',}}>login Time : {agent?.data?.login_time && formatToIST(agent?.data?.login_time)}</Typography>
         </Box>
       </Stack>
       <Divider sx={{ mt: 1, mb: 1, background: '#999', width: '100%' }} />
@@ -107,14 +108,14 @@ const UserProfileCard = ({ agent, onToggle }) => {
             <Typography variant='body2'>Status:</Typography>
             <Typography
               variant="caption"
-              color={agent?.data?.breakLogs?.start ? "orange" : "green"}
+              color={agent?.data?.workStatus ? "green": "red" }
             >
-              {agent?.data?.data?.breakLogs?.end ? "On Break" : "Active"}
+              {agent?.data?.data?.workStatus ? "On Break" : "Active"}
             </Typography>
 
             <Switch
               size="small"
-              checked={!agent?.data?.breakLogs?.start}
+              checked={!agent?.data?.workStatus}
               onChange={handleToggle} //
               color="success"
               inputProps={{ 'aria-label': 'status toggle' }}

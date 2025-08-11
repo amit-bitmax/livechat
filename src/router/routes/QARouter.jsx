@@ -1,9 +1,9 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import PrivateAppbar from '../../components/common/PrivateAppbar';
 import {jwtDecode} from 'jwt-decode';
+import QaAppbar from '../../components/common/private/qa/QaAppbar';
 
-const PrivateRouter = () => {
+const QARouter = () => {
   const token = localStorage.getItem('token');
 
   // ✅ Redirect if token is not present
@@ -28,10 +28,10 @@ const PrivateRouter = () => {
 
   // ✅ If token is valid, render the protected route
   return (
-    <PrivateAppbar>
+    <QaAppbar>
       <Outlet />
-    </PrivateAppbar>
+    </QaAppbar>
   );
 };
 
-export default PrivateRouter;
+export default QARouter;

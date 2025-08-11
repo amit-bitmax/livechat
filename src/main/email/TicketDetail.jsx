@@ -21,9 +21,12 @@ import {
   AttachFile,
   Star,
   StarBorder,
-  MoreVert
+  MoreVert,
+  Send,
+  DeleteOutline,
 } from '@mui/icons-material';
 import { useGetTicketIdQuery, useReplyToTicketMutation } from '../../features/ticket/ticketApi';
+import renderTime from '../../utils/renderTime';
 
 const TicketDetail = () => {
   const { ticketId } = useParams();
@@ -146,7 +149,7 @@ const TicketDetail = () => {
 
           <Stack direction={'row'} alignItems={'center'} spacing={2}>
             <Typography variant="caption" color="text.secondary">
-              {ticket.createdAt ? new Date(ticket.createdAt).toLocaleString() : 'Unknown date'}
+              {ticket.createdAt ? renderTime(ticket.createdAt).toLocaleString() : 'Unknown date'}
             </Typography>
             <IconButton size='small' onClick={() => setIsStarred(!isStarred)} sx={{ mr: 1. }}>
               {isStarred ? <Star color="warning" sx={{ fontSize: '20px' }} /> : <StarBorder sx={{ fontSize: '20px' }} />}
@@ -156,7 +159,7 @@ const TicketDetail = () => {
                 size="small"
                 onClick={() => setIsReplying(true)}
               >
-                <Reply fontSize="small" />
+                <Reply />
               </IconButton>
             </Tooltip>
             <IconButton size='small' >
@@ -207,7 +210,7 @@ const TicketDetail = () => {
                       {reply.from === 'agent' ? 'You' : (reply.senderName || reply.senderEmail || 'Unknown')}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
-                      {reply.createdAt ? new Date(reply.createdAt).toLocaleString() : 'Unknown date'}
+                      {reply.createdAt ? renderTime(reply.createdAt).toLocaleString() : 'Unknown date'}
                     </Typography>
                   </Box>
                 </Box>
@@ -223,47 +226,75 @@ const TicketDetail = () => {
 
       {/* Reply editor */}
       {isReplying ? (
-        <Box sx={{ mt: 4 }}>
-          <Typography variant="subtitle2" sx={{ mb: 1 }}>
-            Reply to {ticket.customerName || ticket.customerEmail || 'customer'}
-          </Typography>
-          <TextField
-            multiline
-            minRows={5}
-            fullWidth
-            value={replyContent}
-            onChange={(e) => setReplyContent(e.target.value)}
-            placeholder="Type your reply here..."
-            sx={{ mb: 2 }}
-          />
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <Button
-              variant="contained"
-              onClick={handleReplySubmit}
-              disabled={!replyContent.trim()}
-            >
-              Send Reply
-            </Button>
-            <Button
-              variant="outlined"
-              startIcon={<AttachFile />}
-            >
-              Attach File
-            </Button>
-            <Button
-              variant="text"
-              onClick={() => setIsReplying(false)}
-            >
-              Cancel
-            </Button>
-          </Box>
+        <Box>
+          <Stack direction={'row'} spacing={2}>
+            <Avatar sx={{
+              width: 40,
+              height: 40,
+              bgcolor: stringToColor(ticket.customerName || ticket.customerEmail || '')
+            }}>
+              {getInitials(ticket.customerName || ticket.customerEmail || '')}
+            </Avatar>
+            <Paper elevation={0} sx={{ p: 2,width:'100%' }}>
+              <Typography variant="body1" sx={{ mb: 1, color: '#999' }}>
+                Reply to {ticket.customerName || ticket.customerEmail || 'customer'}
+              </Typography>
+              <TextField
+                multiline
+                minRows={5}
+                fullWidth
+                value={replyContent}
+                onChange={(e) => setReplyContent(e.target.value)}
+                placeholder="Type your reply here..."
+                sx={{ mb: 2, outline: 'none', border: 'none' }}
+              />
+             <Stack direction={'row'} spacing={1}>
+
+              {/* Send Button (Outlined) */}
+              <Tooltip title="Send">
+                <IconButton
+                  onClick={handleReplySubmit}
+                  disabled={!replyContent.trim()}
+                  aria-label="send"
+                  sx={{ borderRadius: '4px', width: 24, height: 24, }}
+                >
+                  <Send />
+                </IconButton>
+              </Tooltip>
+
+              {/* Attach File Button */}
+              <Tooltip title="Attach File">
+                <IconButton
+                  color='primary'
+                  aria-label="attach-file"
+                  sx={{ borderRadius: '4px', width: 24, height: 24, }}
+                >
+                  <AttachFile fontSize='small'/>
+                </IconButton>
+              </Tooltip>
+
+              {/* Cancel Button */}
+              <Tooltip title="Cancel">
+                <IconButton
+                  sx={{ borderRadius: '4px', width: 24, height: 24, }}
+                  color='error'
+                  variant="text"
+                  onClick={() => setIsReplying(false)}
+                >
+                  <DeleteOutline fontSize='small' />
+                </IconButton>
+              </Tooltip>
+              </Stack>
+            </Paper>
+          </Stack>
         </Box>
+
       ) : (
         <Button
           variant="outlined"
           startIcon={<Reply />}
           onClick={() => setIsReplying(true)}
-          sx={{ mt: 2,borderRadius:'50px' }}
+          sx={{ mt: 2, borderRadius: '50px' }}
         >
           Reply to Ticket
         </Button>

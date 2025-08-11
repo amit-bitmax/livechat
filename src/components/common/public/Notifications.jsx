@@ -14,7 +14,7 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { CheckCircleOutline } from '@mui/icons-material';
-import { useGetNotificationsQuery, useMarkAsReadMutation } from '../../features/notification/notificationApi';
+import { useGetNotificationsQuery, useMarkAsReadMutation } from '../../../features/notification/notificationApi';
 
 const Notifications = () => {
   const [tab, setTab] = useState(0);
@@ -52,9 +52,9 @@ const Notifications = () => {
       </Typography>
 
       {/* Success message once at top */}
-      {data?.message && (
+      {data?.notifications?.message && (
         <Typography variant="caption" color="success.main" align="center" sx={{ py: 1 }}>
-          {data.message}
+          {data?.notifications?.message}
         </Typography>
       )}
 

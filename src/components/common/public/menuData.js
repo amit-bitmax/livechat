@@ -16,8 +16,11 @@ export const menuData = [
             {
                 name: "Chat", icon: Forum,route:"chat",
             },
-                        {
+            {
                 name: "ChatDemo", icon: Forum,route:"chatdemo",
+            },
+            {
+                name: "NewChat", icon: Forum,route:"newchat",
             },
             {
                 name: "Inbox", icon: Inbox,route:"inbox",
@@ -47,24 +50,10 @@ export const menuData = [
             {
                 name: "Pages", icon: Pages,
                 subMenu: [
-                    { name: "Profile", route: "team/agent/profile" },
+                    { name: "Profile", route: "profile" },
                     { name: "Notifictions", route: "notifications" },
                 ]
             },
         ]
     }
 ];
-
-export const employee=[
-     {
-        id: 1,
-        username: "Amit Kumar",
-        employeeId: "EMP001",
-        mobile: "9876543210",
-        email: "amit@example.com",
-        status: "Active",
-        onBreak: false,
-        activeSince: new Date().toISOString(),
-        elapsedTime: 0,
-    },
-]
