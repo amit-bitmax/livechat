@@ -5,7 +5,7 @@ import {  Box, Collapse, Typography, IconButton, Divider, List, ListItem, ListIt
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight,  ExpandMore } from '@mui/icons-material';
 
-import { menuData } from './menuData';
+// import { menuData } from './menuData';
 import { PiDotOutlineFill, PiDotOutlineLight } from 'react-icons/pi';
 
 const drawerWidth = 190;
@@ -56,7 +56,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     ...theme.mixins.toolbar,
 }));
 
-const Sidebar = ({ open, handleDrawerClose }) => {
+const Sidebar = ({ open, handleDrawerClose, menuData }) => {
     const theme = useTheme();
     const navigate = useNavigate();
     const [openMenus, setOpenMenus] = useState({});
@@ -172,7 +172,7 @@ const Sidebar = ({ open, handleDrawerClose }) => {
             <Divider />
             <Box sx={{background:'#ebececf4',height:'100%'}}>
                 <List>
-                    {menuData.map((section) => (
+                    {menuData?.map((section) => (
                         <React.Fragment key={section.label}>
                             {open && <ListItemText sx={{color:'#cbc6c6be',ml:1, textTransform: 'uppercase' }}>{section.label}</ListItemText>}
                             {renderMenuItems(section.items)}

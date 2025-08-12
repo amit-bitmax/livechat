@@ -17,6 +17,7 @@ import TicketDetail from "../main/email/TicketDetail";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import AgentDashboard from "../pages/agent/AgentDashboard";
 import QaDashboard from "../pages/qa/QaDashboard";
+import QaChat from "../pages/qa/QaChat";
 
 const adminChildren = [
   { path: "", index: true, element: <AdminDashboard /> },
@@ -24,6 +25,8 @@ const adminChildren = [
 
 const qaChildren = [
   { path: "", index: true, element: <QaDashboard /> },
+   { path: "chat", element: <QaChat /> },
+     { path: "team", element: <Agents /> },
 ];
 
 const agentChildren = [

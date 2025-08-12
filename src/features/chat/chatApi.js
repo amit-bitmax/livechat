@@ -26,7 +26,7 @@ export const chatApi = createApi({
     }),
     replyToPetition: builder.mutation({
       query: ({ petitionId, message }) => ({
-        url: `${petitionId}/reply`,
+        url: `/${petitionId}/reply`,
         method: 'POST',
         body: { message },
       }),

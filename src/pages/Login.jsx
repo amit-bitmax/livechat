@@ -15,7 +15,8 @@ import {
 import { useLoginUserMutation } from '../features/auth/authApi';
 import { connectSocket } from '../socket/socket';
 
-import IM1 from '../assets/images/photo-1.avif';
+import IM1 from '../assets/images/loginBg2.png';
+import VD1 from '../assets/videos/SecureLogin.mp4'
 
 const Login = () => {
   const theme = useTheme();
@@ -114,36 +115,46 @@ const token = res.token;
           position:'relative',
           height: '100vh',
           width: '100vw',
-          backgroundImage: `url(${IM1})`,
+          // backgroundImage: `url(${IM1})`,
+          background: 'linear-gradient(rgba(253, 251, 250, 1), rgba(254, 253, 253, 0.3)), url(${IM1})',
           backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          // backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+           alignItems: 'center',
+          // justifyContent: 'center',
           
         }}
       >
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            background: 'rgba(0, 0, 0, 0.1)', 
-            zIndex: 1,
-          }}
-        />
+      
+         {/* <Box
+         sx={{
+           position: 'absolute',
+           bottom: 0,
+           right: 0,
+           width: '150%',
+           backgroundImage: `url(${IM1})`,
+           height: '100%',
+
+           zIndex: 1
+         }} /> */}
         <Box sx={{ position: 'relative', zIndex: 2 }}>
-          <Grid container justifyContent="center">
+          <Grid container justifyContent="left">
             <Grid size={{xs:12}}>
               <Card
                 elevation={0}
                 sx={{
                   borderRadius: 2,
                   backdropFilter: 'blur(10px)',
-                  background: 'transparent',
+                  // background: 'transparent',
+                   backgroundImage: `url(${IM1})`,
+                  background: 'linear-gradient(rgba(255, 126, 90, 1.00), rgba(239, 120, 60, 0.3)), url(${})',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
+                  width: '100%',
+                  marginLeft: '40px',
+                  
                 }}
               >
                 <Box  sx={{ width: '100%', }}>
@@ -171,11 +182,39 @@ const token = res.token;
                   </Box>
                 </CardContent>
                 </Box> 
+              
               </Card>
+              
             </Grid>
           </Grid>
          </Box>
+        
+          <Box sx={{
+            // position: 'absolute',
+            bottom: 0,
+            right: 0,
+            zIndex: 1
+          }}>
+             <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        style={{
+          position: 'relative',
+          bottom: 0,
+          right: -250,
+          width: '100vh',
+         height: '100vh',
+          zIndex: 1,
+          objectFit: 'cover'
+        }}
+      >
+        <source src={VD1} type="video/mp4" />
+      </video>
+          </Box>
       </Box>
+      
     </>
   );
 };

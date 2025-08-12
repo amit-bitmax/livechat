@@ -6,7 +6,7 @@ import {
 } from "@mui/material";
 import { Search, Send, Videocam, CallEnd, HorizontalRule, Call } from "@mui/icons-material";
 import { useGetAllCustomerQuery } from "../../features/customer/customerApi";
-import { useGetConversationQuery, useSendMessageMutation, useReplyToPetitionMutation } from "../../features/chat/chatApi";
+import { useGetConversationQuery, useSendMessageMutation } from "../../features/chat/chatApi";
 import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
 import {
@@ -47,7 +47,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 
-const Chat = ({ currentUserId }) => {
+const QaChat = ({ currentUserId }) => {
   const [tab, setTab] = useState(0);
   const [selectedUser, setSelectedUser] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -61,7 +61,6 @@ const Chat = ({ currentUserId }) => {
   const calls = callsData?.data || [];
 
   const { data: customerData } = useGetAllCustomerQuery();
-  const { data: selectedMsgReplyData} = useReplyToPetitionMutation();
   const customers = customerData?.data || [];
 
   const [sendMessage] = useSendMessageMutation();
@@ -108,26 +107,6 @@ const handleSend = async () => {
     toast.error(err?.data?.message || "Send failed");
   }
 };
-
-const handleReply = async () => {
-  if (!text.trim() || !otherUserId) return;
-  const newMessage = {
-    from: currentUserId,
-    to: otherUserId,
-    message: text.trim(),
-    createdAt: new Date().toISOString(),
-  };
-
-  // Optimistic UI update
-
-  try {
-    await sendMessage({ to: otherUserId, message: newMessage.message }).unwrap();
-  } catch (err) {
-    toast.error(err?.data?.message || "Send failed");
-  }
-};
-
-
 
   
 
@@ -177,9 +156,12 @@ const combinedMessages = useMemo(() => {
     }
   };
 
+
   const ChatMessage = ({ msg, selectedUser }) => {
+    console.log("msg", msg?.from);
     const isFrom = msg?.from === selectedUser?._id;
     const isTo = msg?.to === selectedUser?._id;
+    console.log("isFrom", selectedUser?._id, isFrom);
     return (
       <Box mb={1} display="flex" justifyContent={isFrom ? "flex-start" : "flex-end"}>
         <Stack direction="row" sx={{ flexDirection: isFrom ? "row" : "row-reverse" }}>
@@ -206,7 +188,7 @@ const combinedMessages = useMemo(() => {
             >
             <Stack direction={'row'} spacing={2} alignItems={'center'}>
               <Typography variant="body1">{msg?.message}</Typography>
-                <IconButton sx={{height:'20px',width:'20px'}} size="small"><ChatReply onChange={handleReply} petitionId={msg?.petitionId}/></IconButton>
+                <IconButton sx={{height:'20px',width:'20px'}} size="small"><ChatReply/></IconButton>
             </Stack>
             </Box>
             <Typography variant="body2" sx={{ fontSize: "10px", mt: 1, ml: 1 }}>
@@ -216,12 +198,6 @@ const combinedMessages = useMemo(() => {
         </Stack>
       </Box>
     );
-  };
-
-  const selectedMessageReply = ({ msg, selectedUser }) => {
-       
-
-    
   };
 
   return (
@@ -332,7 +308,7 @@ const combinedMessages = useMemo(() => {
                 </Stack>
 
                 {/* Messages */}
-                <Box sx={{ height: "65vh",scrollbarWidth:'none', "&::-webkit-scrollbar":{display:'none'}, overflowY: "auto", p: 1 }}>
+                <Box sx={{ height: "67vh",scrollbarWidth:'none', "&::-webkit-scrollbar":{display:'none'}, overflowY: "auto", p: 1 }}>
                   {loadingMessages ? (
                     <ChatSkeleton variant="messages" />
                   ) : combinedMessages.length > 0 ? (
@@ -341,16 +317,11 @@ const combinedMessages = useMemo(() => {
                     <Typography>No messages yet</Typography>
                   )}
                 </Box>
-               <Box sx={{border: "1px solid #ddd", borderRadius: 2, mx: 1, backgroundColor: "#f8fbfcd1" }}> 
-               {/* Reply */}
-               <Stack direction="column" alignItems="left" sx={{ border: "1px solid #f9f5f5ff", borderRadius: 2, backgroundColor: "#ddd9d9d1", m:0.75, p: 1 }} >         
-                   <Typography variant="body1" sx={{fontWeight:'bold', color:'secondary.main', fontSize:'12px'}}>{selectedUser.name}</Typography>
-                   <Typography variant="body1" ><span>hey this dummy message</span></Typography>
-               </Stack>
-                 {/* Input */}
-                <Stack direction="row" alignItems="center" sx={{ }} spacing={1}>
+
+                {/* Input */}
+                <Stack direction="row" alignItems="center" sx={{ m: 1,}} spacing={1}>
                   <TextField
-                    sx={{ flex: 1, }}
+                    sx={{ flex: 1, border: "1px solid #ddd", borderRadius: "50px" }}
                     fullWidth
                     size="small"
                     value={text}
@@ -361,7 +332,6 @@ const combinedMessages = useMemo(() => {
                     <Send />
                   </IconButton>
                 </Stack>
-               </Box>
               </Box>
             ) : (
               <Box sx={{display:'flex',alignItems:'center',justifyContent:'center',height:'100%',my:'auto'}}>
@@ -390,4 +360,4 @@ const combinedMessages = useMemo(() => {
   );
 };
 
-export default Chat;
+export default QaChat;

@@ -10,7 +10,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import { styled } from '@mui/material/styles';
 import Sidebar from '../../public/Sidebar';
-
+import {menuData} from '../../public/menuData';
 import Notifications from '../../public/Notifications';
 import { ColorModeContext } from '../../../../App';
 import { Brightness4, Brightness7 } from '@mui/icons-material';
@@ -182,7 +182,7 @@ const AgentAppbar = ({ children }) => {
           </Stack>
         </Toolbar>
       </AppBar>
-      <Sidebar open={open} handleDrawerClose={handleDrawerToggle} />
+      <Sidebar open={open} handleDrawerClose={handleDrawerToggle} menuData={menuData} />
       <Box
         component="main"
         sx={{

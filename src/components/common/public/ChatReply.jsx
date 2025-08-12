@@ -24,7 +24,7 @@ export default function ChatReply({ petitionId }) {
   const [replyOpen, setReplyOpen] = useState(false);
   const [replyText, setReplyText] = useState("");
 
-  const [replyToPetition] = useReplyToPetitionMutation();
+  const [replyToPetition] = useReplyToPetitionMutation(petitionId, replyText);
   const [transferPetition] = useTransferPetitionMutation();
 
   const handleOpenMenu = (event) => setAnchorEl(event.currentTarget);
