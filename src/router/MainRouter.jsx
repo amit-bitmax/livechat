@@ -2,7 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import PublicRoutes from "./routes/PublicRouter";
 import AgentRoutes from "./routes/AgentRouter";
 import AdminRouter from "./routes/AdminRouter";
-import QARouter from "./routes/QaRouter";
+
 
 import Login from "../pages/Login";
 import Profile from "../pages/profile/Profile";
@@ -17,6 +17,7 @@ import TicketDetail from "../main/email/TicketDetail";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import AgentDashboard from "../pages/agent/AgentDashboard";
 import QaDashboard from "../pages/qa/QaDashboard";
+import QARouter from "./routes/QaRouter";
 
 const adminChildren = [
   { path: "", index: true, element: <AdminDashboard /> },
