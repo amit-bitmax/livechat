@@ -107,7 +107,7 @@ export default function NewChat({ currentUserId }) {
   const messages = messagesData?.data?.messages || [];
   const conversationId = messagesData?.data?._id;
   const calls = callsData?.data || [];
-console.log("all calls",calls);
+  // fliter customer
   const filteredCustomers = useMemo(() => {
     return customers.filter(
       (user) =>

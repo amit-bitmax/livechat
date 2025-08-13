@@ -28,7 +28,7 @@ const renderTime = (dateStr) => {
   } else if (hoursAgo < 24) {
     return format(date, 'hh:mm a'); // e.g., 03:45 PM
   } else if (daysAgo < 365) {
-    return format(date, 'dd MMM hh:mm a'); // e.g., 19 Jul 03:45 PM
+    return format(date, 'hh:mm a'); // e.g., 19 Jul 03:45 PM
   } else {
     return format(date, 'dd MMM yyyy hh:mm a'); // e.g., 21 Jul 2023 03:45 PM
   }

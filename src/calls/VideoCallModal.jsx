@@ -18,6 +18,7 @@ import {
 } from "@mui/icons-material";
 import { closeConnection } from "../utils/webrtc";
 import { useUpdateCallStatusMutation } from "../features/room/roomApi";
+import { toast } from "react-toastify";
 
 const VideoCallModal = ({
   open,
@@ -76,14 +77,15 @@ const VideoCallModal = ({
 
     try {
       if (roomId) {
-        await updateCallStatus({ roomId, status: "ended" }); // ✅ API call
+        await updateCallStatus({ roomId, status: "ended" }); 
+        toast.success("Call Ended");
         console.log("✅ Call status updated to 'ended'");
       }
     } catch (err) {
       console.error("❌ Failed to update call status:", err);
     }
 
-    onEnd(); // cleanup from parent
+    onEnd();
   };
 
   const toggleMute = () => {
@@ -105,19 +107,18 @@ const VideoCallModal = ({
   if (!open) return null;
 
   return (
-    <Modal open={open} sx={{ background: "rgba(0,0,0,0.7)" }} onClose={handleEnd}>
+    <Modal open={open} sx={{ background: "transparent", }} onClose={handleEnd}>
       <Box
         sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}
       >
         <Paper
           ref={containerRef}
-          elevation={4}
+          elevation={0}
           sx={{
             position: "relative",
-            width: "50vw",
+            width: {xs:'70%',lg:"30vw"},
             maxWidth: 1000,
-            height: "80vh",
-            bgcolor: "#000",
+            height: "85vh",
             overflow: "hidden",
             display: "flex",
             flexDirection: "column",
@@ -149,13 +150,13 @@ const VideoCallModal = ({
           <Box
             sx={{
               position: "absolute",
-              bottom: 80,
-              right: 16,
+              top: 50,
+              right: 20,
               borderRadius: 2,
               overflow: "hidden",
-              border: "2px solid #fff",
-              width: 180,
-              height: 120,
+              border: "1px solid #fff",
+              width: 120,
+              height: 150,
               zIndex: 10,
             }}
           >

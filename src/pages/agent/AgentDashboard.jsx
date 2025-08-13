@@ -26,7 +26,7 @@ const AgentDashboard = () => {
     });
   }, [roomId]);
 
-  const startCall = async () => {
+const startCall = async () => {
   const { peerConnection, remoteStream: rs } = initPeerConnection();
   setRemoteStream(rs);
 
@@ -35,29 +35,34 @@ const AgentDashboard = () => {
   addTracks();
 
   const offer = await createOffer();
-  const roomId = crypto.randomUUID(); // or use any UUID method
-  setRoomId(roomId);
   setCallOpen(true);
 
-  // ✅ 1. Save to backend
   try {
-    await createCall({
+    // ✅ Backend me call create karein, backend roomId return karega
+    const res = await createCall({ receiverId: customerId }).unwrap();
+
+    const backendRoomId = res?.data?.roomId;
+     console.log("roomId:", backendRoomId);
+    setRoomId(backendRoomId);
+
+    // ✅ Socket se call initiate karein
+    initiateCall({
+      roomId: backendRoomId,
+      callerId: agentId,
       receiverId: customerId,
-    }).unwrap();
-    console.log("📞 Call saved to DB");
+      offer
+    });
   } catch (error) {
     console.error("❌ API error while creating call:", error);
   }
-
-  // ✅ 2. Trigger signaling via socket
-  initiateCall({ roomId, fromUserId: agentId, toUserId: customerId, offer });
 };
+
 
 
   return (
     <>
       <button onClick={startCall}>Call Customer</button>
-      <VideoCallModal open={callOpen} onEnd={() => setCallOpen(false)} localStream={localStream} remoteStream={remoteStream} callAccepted={onCallAccepted} />
+      <VideoCallModal open={callOpen} onEnd={() => setCallOpen(false)} localStream={localStream} remoteStream={remoteStream} callAccepted={onCallAccepted} roomId={roomId} />
     </>
   );
 };

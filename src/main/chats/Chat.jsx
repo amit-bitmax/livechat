@@ -9,6 +9,7 @@ import { useGetAllCustomerQuery } from "../../features/customer/customerApi";
 import { useGetConversationQuery, useSendMessageMutation } from "../../features/chat/chatApi";
 import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
+import dayjs from "dayjs";
 import {
   useCreateCallMutation,
   useUpdateCallStatusMutation,
@@ -20,6 +21,7 @@ import VideoCallModal from "../../calls/VideoCallModal";
 import renderTime from "../../utils/renderTime";
 import ChatReply from "../../components/common/public/ChatReply";
 import chatSocket from "../../socket/chatSocket";
+import ChatMessage from "./ChatMessage";
 
 const IMG_BASE_URL = "http://localhost:5003/uploads/profile";
 
@@ -56,13 +58,15 @@ const Chat = ({ currentUserId }) => {
   const token = localStorage.getItem("token");
   const decoded = token ? jwtDecode(token) : null;
   const agentId = decoded?.id;
+  const [currentDate, setCurrentDate] = useState("");
 
+  const containerRef = useRef(null);
   const { data: callsData, isLoading: loadingCalls } = useGetCallHistoryQuery();
   const calls = callsData?.data || [];
 
   const { data: customerData } = useGetAllCustomerQuery();
   const customers = customerData?.data || [];
-
+  const [isReply, setIsReply] = useState(false);
   const [sendMessage] = useSendMessageMutation();
   const [createCall] = useCreateCallMutation();
   const [updateCallStatus] = useUpdateCallStatusMutation();
@@ -77,70 +81,71 @@ const Chat = ({ currentUserId }) => {
   }, [customers, tab, searchQuery]);
 
   const otherUserId = selectedUser?._id;
-const [liveMessages, setLiveMessages] = useState([]); // only live updates
-  const { data:messagesData, isLoading: loadingMessages } = useGetConversationQuery(
+  const [liveMessages, setLiveMessages] = useState([]); // only live updates
+  const { data: messagesData, isLoading: loadingMessages } = useGetConversationQuery(
     selectedUser?._id,
     { skip: !selectedUser }
   );
-   const roomId = [currentUserId, otherUserId].sort().join("_");
-const handleSend = async () => {
-  if (!text.trim() || !otherUserId) return;
-
   const roomId = [currentUserId, otherUserId].sort().join("_");
-  const newMessage = {
-    from: currentUserId,
-    to: otherUserId,
-    message: text.trim(),
-    createdAt: new Date().toISOString(),
+  const handleSend = async () => {
+    if (!text.trim() || !otherUserId) return;
+
+    const roomId = [currentUserId, otherUserId].sort().join("_");
+    const newMessage = {
+      from: currentUserId,
+      to: otherUserId,
+      message: text.trim(),
+      createdAt: new Date().toISOString(),
+    };
+
+    // Emit to room
+    chatSocket.emit("sendMessage", { roomId, message: newMessage });
+
+    // Optimistic UI update
+    setLiveMessages((prev) => [...prev, newMessage]);
+    setText("");
+
+    try {
+      await sendMessage({ to: otherUserId, message: newMessage.message }).unwrap();
+    } catch (err) {
+      toast.error(err?.data?.message || "Send failed");
+    }
   };
 
-  // Emit to room
-  chatSocket.emit("sendMessage", { roomId, message: newMessage });
 
-  // Optimistic UI update
-  setLiveMessages((prev) => [...prev, newMessage]);
-  setText("");
 
-  try {
-    await sendMessage({ to: otherUserId, message: newMessage.message }).unwrap();
-  } catch (err) {
-    toast.error(err?.data?.message || "Send failed");
-  }
-};
+  // join room + listen for new messages
+  useEffect(() => {
+    if (!otherUserId || !currentUserId) return;
 
-  
+    chatSocket.emit("joinRoom", roomId);
 
-// join room + listen for new messages
-useEffect(() => {
-  if (!otherUserId || !currentUserId) return;
+    // chatSocket.on("receiveMessage", (msg) => {
+    //   setLiveMessages((prev) => [...prev, msg]);
+    // });
 
-  chatSocket.emit("joinRoom", roomId);
+    // return () => {
+    //   chatSocket.off("receiveMessage");
+    // };
+  }, [roomId, otherUserId, currentUserId]);
 
-  // chatSocket.on("receiveMessage", (msg) => {
-  //   setLiveMessages((prev) => [...prev, msg]);
-  // });
-
-  // return () => {
-  //   chatSocket.off("receiveMessage");
-  // };
-}, [roomId, otherUserId, currentUserId]);
-
-// combine API history + live messages
-const combinedMessages = useMemo(() => {
-  const history = messagesData?.data?.flatMap(item => item.messages || []) || [];
-  return [...history, ...liveMessages].sort(
-    (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
-  );
-}, [messagesData, liveMessages]);
+  // combine API history + live messages
+  const combinedMessages = useMemo(() => {
+    const history = messagesData?.data?.flatMap(item => item.messages || []) || [];
+    return [...history, ...liveMessages].sort(
+      (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+    );
+  }, [messagesData, liveMessages]);
 
   const startVideoCall = async () => {
     if (!selectedUser) return toast.error("Select a user first");
     try {
       const newRoomId = `room-${agentId}-${selectedUser._id}`;
       await createCall({
-        roomId: newRoomId,
+        roomId: "123",
         callerId: agentId,
-        receiverId: selectedUser._id
+        receiverId: selectedUser._id,
+        offer
       }).unwrap();
       setIsCallOpen(true);
     } catch (err) {
@@ -156,49 +161,27 @@ const combinedMessages = useMemo(() => {
     }
   };
 
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
 
-  const ChatMessage = ({ msg, selectedUser }) => {
-    console.log("msg", msg?.from);
-    const isFrom = msg?.from === selectedUser?._id;
-    const isTo = msg?.to === selectedUser?._id;
-    console.log("isFrom", selectedUser?._id, isFrom);
-    return (
-      <Box mb={1} display="flex" justifyContent={isFrom ? "flex-start" : "flex-end"}>
-        <Stack direction="row" sx={{ flexDirection: isFrom ? "row" : "row-reverse" }}>
-          {/* <Avatar
-            alt={isFrom ? msg?.from?.name : msg?.to?.name}
-            src={
-              isFrom && msg?.from?.profileImage
-                ? `${IMG_BASE_URL}/${selectedUser.profileImage}`
-                : msg?.to?.profileImage
-                  ? `${IMG_BASE_URL}/${selectedUser.profileImage}`
-                  : ''
-            }
-          /> */}
-          <Box>
-            <Box
-              sx={{
-                mt: 0.2,
-                backgroundColor: isFrom ? "#d9efc1ff" : "#cbe2ddff",
-                p: 1,
-                px: 2,
-                borderRadius: 2,
-                maxWidth: 300
-              }}
-            >
-            <Stack direction={'row'} spacing={2} alignItems={'center'}>
-              <Typography variant="body1">{msg?.message}</Typography>
-                <IconButton sx={{height:'20px',width:'20px'}} size="small"><ChatReply/></IconButton>
-            </Stack>
-            </Box>
-            <Typography variant="body2" sx={{ fontSize: "10px", mt: 1, ml: 1 }}>
-              {renderTime(msg?.createdAt)}
-            </Typography>
-          </Box>
-        </Stack>
-      </Box>
-    );
-  };
+    const onScroll = () => {
+      const items = container.querySelectorAll("[data-date]");
+      for (let item of items) {
+        const rect = item.getBoundingClientRect();
+        const containerTop = container.getBoundingClientRect().top;
+        if (rect.top >= containerTop && rect.top <= containerTop + 50) {
+          setCurrentDate(item.getAttribute("data-date"));
+          break;
+        }
+      }
+    };
+
+    container.addEventListener("scroll", onScroll);
+    onScroll(); // initialize on mount
+
+    return () => container.removeEventListener("scroll", onScroll);
+  }, [combinedMessages]);
 
   return (
     <>
@@ -226,7 +209,7 @@ const combinedMessages = useMemo(() => {
               <Tab sx={{ mt: 1, minWidth: 75 }} label="Active" />
               <Tab sx={{ mt: 1, minWidth: 75 }} label="Calls" />
             </Tabs>
-            <Box sx={{ height: { xs: '100vh', lg: "70vh" },scrollbarWidth:'none', "&::-webkit-scrollbar":{display:'none'}, overflowY: "auto",}}>
+            <Box sx={{ height: { xs: '100vh', lg: "70vh" }, scrollbarWidth: 'none', "&::-webkit-scrollbar": { display: 'none' }, overflowY: "auto", }}>
               {tab === 2 ? (
                 loadingCalls ? (
                   <CircularProgress />
@@ -275,7 +258,7 @@ const combinedMessages = useMemo(() => {
 
         {/* Right Panel */}
         <Grid size={{ xs: 12, lg: 6 }}>
-          <Card sx={{ height: "88vh",width:'100%' }}>
+          <Card sx={{ width: '100%' }}>
             {selectedUser && tab !== 2 ? (
               <Box>
                 {/* Header */}
@@ -297,44 +280,129 @@ const combinedMessages = useMemo(() => {
                       </Typography>
                     </Box>
                   </Stack>
-                  <Box sx={{display:'flex',alignItems:'center' ,gap:1}}>
-                    <IconButton size="small" onClick={()=>startVideoCall(false)}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <IconButton size="small" onClick={() => startVideoCall(false)}>
                       <Call />
                     </IconButton>
-                    <IconButton size="small" onClick={()=>startVideoCall(true)}>
+                    <IconButton size="small" onClick={() => startVideoCall(true)}>
                       <Videocam />
                     </IconButton>
                   </Box>
                 </Stack>
+                <Box sx={{ position: "relative", mb: 3, height: { xs: "250px", lg: "350px" } }}>
+                  {/* Fixed Current Date Header */}
+                  {currentDate && (
+                    <Box
+                      sx={{
+                        position: "sticky",
+                        top: 0,
+                        zIndex: 20,
+                        textAlign: "center",
+                        backgroundColor: "transparent",
+                      }}
+                    >
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          backgroundColor: "#e0e0e0",
+                          padding: "2px 10px",
+                          borderRadius: "12px",
+                          fontSize: "12px",
+                          boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                          display: "inline-block",
+                          mt: 1
+                        }}
+                      >
+                        {dayjs(currentDate).isSame(dayjs(), "day")
+                          ? "Today"
+                          : dayjs(currentDate).isSame(dayjs().subtract(1, "day"), "day")
+                            ? "Yesterday"
+                            : dayjs(currentDate).format("DD MMM YYYY")}
+                      </Typography>
+                    </Box>
+                  )}
 
-                {/* Messages */}
-                <Box sx={{ height: "67vh",scrollbarWidth:'none', "&::-webkit-scrollbar":{display:'none'}, overflowY: "auto", p: 1 }}>
-                  {loadingMessages ? (
-                    <ChatSkeleton variant="messages" />
-                  ) : combinedMessages.length > 0 ? (
-                    combinedMessages?.map((msg) => <ChatMessage key={msg._id} msg={msg} selectedUser={selectedUser} />)
+                  {/* Scrollable Messages */}
+                  <Box
+                    ref={containerRef}
+                    sx={{
+                      overflowY: "auto",
+                      p: 1,
+                      height: "100%",
+                      background: "none",
+                      "&::-webkit-scrollbar": { display: "none" },
+                    }}
+                  >
+                    {loadingMessages ? (
+                      <ChatSkeleton />
+                    ) : combinedMessages.length > 0 ? (
+                      combinedMessages.map((msg, index) => {
+                        const messageDate = dayjs(msg.createdAt).format("YYYY-MM-DD");
+                        return (
+                          <Box key={msg._id || `temp-${index}`} data-date={messageDate}>
+                            <ChatMessage key={msg._id} msg={msg} selectedUser={selectedUser} />
+                          </Box>
+                        );
+                      })
+                    ) : (
+                      <Typography>No messages found</Typography>
+                    )}
+                  </Box>
+                </Box>
+                {/* Input */}
+                <Box
+                  sx={{
+                    border: "1px solid #ddd",
+                    mb: 1,
+                    borderRadius: 2,
+                    mx: 1,
+                    backgroundColor: "#f8fbfcd1",
+                  }}
+                >
+                  {isReply ? (
+                    // ✅ Reply Box
+                    <Stack
+                      direction="column"
+                      alignItems="flex-start"
+                      sx={{
+                        border: "1px solid #f9f5f5ff",
+                        borderRadius: 2,
+                        backgroundColor: "#ddd9d9d1",
+                        m: 0.75,
+                        p: 1,
+                      }}
+                    >
+                      <Typography
+                        variant="body1"
+                        sx={{ fontWeight: "bold", color: "secondary.main", fontSize: "12px" }}
+                      >
+                        {selectedUser?.name}
+                      </Typography>
+                      <Typography variant="body1">
+                        <span>hey this dummy message</span>
+                      </Typography>
+                    </Stack>
                   ) : (
-                    <Typography>No messages yet</Typography>
+                    // ✅ Normal Message Box
+                    <Stack direction="row" alignItems="center" spacing={1}>
+                      <TextField
+                        sx={{ flex: 1 }}
+                        fullWidth
+                        size="small"
+                        value={text}
+                        onChange={(e) => setText(e.target.value)}
+                        placeholder="Type your message"
+                      />
+                      <IconButton onClick={handleSend}>
+                        <Send />
+                      </IconButton>
+                    </Stack>
                   )}
                 </Box>
 
-                {/* Input */}
-                <Stack direction="row" alignItems="center" sx={{ m: 1,}} spacing={1}>
-                  <TextField
-                    sx={{ flex: 1, border: "1px solid #ddd", borderRadius: "50px" }}
-                    fullWidth
-                    size="small"
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
-                    placeholder="Type your message"
-                  />
-                  <IconButton onClick={handleSend}>
-                    <Send />
-                  </IconButton>
-                </Stack>
               </Box>
             ) : (
-              <Box sx={{display:'flex',alignItems:'center',justifyContent:'center',height:'100%',my:'auto'}}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', my: 'auto' }}>
                 <Typography variant="h6">No message available select user</Typography>
               </Box>
             )}

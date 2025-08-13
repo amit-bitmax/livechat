@@ -121,7 +121,7 @@ export default function ChatWindow({ conversationId, customer }) {
                   <Typography variant="body2">{msg.message}</Typography>
                   <Typography
                     variant="caption"
-                    sx={{ display: "block", textAlign: "right", opacity: 0.7 }}
+                    sx={{ display: "block", textAlign: "right",color:'#b8a9a9ff', opacity: 0.5 }}
                   >
                     {formatTime(msg.createdAt)}
                   </Typography>

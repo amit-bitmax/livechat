@@ -3,7 +3,12 @@ let localStream;
 let remoteStream;
 let peerConnection;
 let iceCandidateCallback = null;
-const servers = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
+const servers = { iceServers: [ // Google STUN servers
+    { urls: "stun:stun.l.google.com:19302" },
+    { urls: "stun:stun1.l.google.com:19302" },
+    { urls: "stun:stun2.l.google.com:19302" },
+    { urls: "stun:stun3.l.google.com:19302" },
+    { urls: "stun:stun4.l.google.com:19302" },] };
 
 export const initPeerConnection = () => {
   peerConnection = new RTCPeerConnection(servers);
