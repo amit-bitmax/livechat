@@ -17,7 +17,8 @@ import TicketDetail from "../main/email/TicketDetail";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import AgentDashboard from "../pages/agent/AgentDashboard";
 import QaDashboard from "../pages/qa/QaDashboard";
-import QARouter from "./routes/QaRouter";
+import QaRouter from "./routes/QaRouter";
+
 
 const adminChildren = [
   { path: "", index: true, element: <AdminDashboard /> },
@@ -53,7 +54,7 @@ const routers = createBrowserRouter([
   },
   {
     path: "/qa",
-    element: <QARouter />,
+    element: <QaRouter />,
     children: qaChildren,
   },
   {

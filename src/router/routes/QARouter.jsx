@@ -3,7 +3,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 import {jwtDecode} from 'jwt-decode';
 import QaAppbar from '../../components/common/private/qa/QaAppbar';
 
-const QARouter = () => {
+const QaRouter = () => {
   const token = localStorage.getItem('token');
 
   // ✅ Redirect if token is not present
@@ -34,4 +34,4 @@ const QARouter = () => {
   );
 };
 
-export default QARouter;
+export default QaRouter;
